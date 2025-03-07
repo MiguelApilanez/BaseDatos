@@ -838,9 +838,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   balcon: {fileID: 6010247945986658634, guid: 4b3179cac68edeb4786c248391947b29, type: 3}
   volador: {fileID: 225763299679676276, guid: 030ea6008b7b55343babb76368e36418, type: 3}
+  building: {fileID: 2099132750}
   balcones:
   - {fileID: 1323113658}
   - {fileID: 1785879860}
+  tiempoBalcon: 2
+  tiempoVolador: 3
 --- !u!4 &688184330
 Transform:
   m_ObjectHideFlags: 0

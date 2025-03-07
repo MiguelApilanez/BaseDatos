@@ -1,0 +1,56 @@
+SELECT * Pokémon
+
+SELECT Nombre
+FROM Pokémon
+
+SELECT N_Pokédex, Nombre
+FROM Pokémon
+
+SELECT distinct Primer_Tipo
+FROM Pokémon
+
+SELECT Nombre
+FROM Pokémon
+WHERE Habilidad = 'Espesura'
+
+SELECT Nombre
+FROM Pokémon
+WHERE Primer_Tipo = 'Fuego'
+AND Segundo_Tipo = 'Volador'
+
+SELECT Nombre
+FROM Pokémon
+WHERE Primer_Tipo = 'Bicho'
+AND NOT Segundo_Tipo = 'Volador'
+
+SELECT Nombre, Primer_Tipo, Segundo_Tipo
+FROM Pokémon
+WHERE Segundo:Tipo IS null
+
+SELECT N_Pokédex, Nombre
+FROM Pokémon
+ORDER BY Nombre DESC
+
+SELECT N_Pokédex, Nombre
+FROM Pokémon
+WHERE Nombre
+LIKE 'Ka%' 
+
+SELECT N_Pokédex, Nombre
+FROM Pokémon
+WHERE Nombre
+LIKE 'Mach___'
+
+SELECT N_Pokédex, Nombre
+FROM Pokémon
+WHERE Nombre
+NOT LIKE '%a%'
+
+SELECT N_Pokédex, Nombre
+FROM Pokémon
+WHERE Primer_Tipo =
+(
+	SELECT Primer_Tipo
+	FROM Pokémon
+	WHERE Nombre = 'Pikachu'
+)
