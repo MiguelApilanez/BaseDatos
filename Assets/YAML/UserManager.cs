@@ -7,139 +7,98 @@ using TMPro;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using System;
-
-
-[Serializable]
-public class User
-{
-    public string Username;
-    public string PasswordHash;
-}
-
-[Serializable]
-public class UserDatabase
-{
-    public List<User> Users = new List<User>();
-}
+using System.Security.Cryptography;
+using System.Text;
 
 public class UserManager : MonoBehaviour
 {
-    [Header("Login Panel")]
-    [SerializeField] private GameObject loginPanel;
-    [SerializeField] private TMP_InputField usernameInput;
-    [SerializeField] private TMP_InputField passwordInput;
-    [SerializeField] private Button loginButton;
-    [SerializeField] private Button goToRegisterButton;
-
-    [Header("Register Panel")]
-    [SerializeField] private GameObject registerPanel;
-    [SerializeField] private TMP_InputField newUsernameInput;
-    [SerializeField] private TMP_InputField newPasswordInput;
-    [SerializeField] private Button signUpButton;
-    [SerializeField] private Button backToLoginButton;
-
-    [Header("Main Menu Panel")]
-    [SerializeField] private GameObject mainMenuPanel;
-    [SerializeField] private TextMeshProUGUI usernameDisplay;
-
     private string filePath;
-    private UserDatabase userDatabase = new UserDatabase();
-    private string loggedInUser = "";
+    private UserDatabase userDatabase;
 
     private void Start()
     {
+        Debug.Log("Ruta del archivo YAML: " + filePath);
+    }
+    private void Awake()
+    {
         filePath = Path.Combine(Application.persistentDataPath, "users.yaml");
-        LoadUsers();
 
-        loginButton.onClick.AddListener(() => Login(usernameInput.text, passwordInput.text));
-        goToRegisterButton.onClick.AddListener(() => ShowPanel(registerPanel));
-
-        signUpButton.onClick.AddListener(() => RegisterUser(newUsernameInput.text, newPasswordInput.text));
-        backToLoginButton.onClick.AddListener(() => ShowPanel(loginPanel));
-
-        ShowPanel(loginPanel);
-    }
-    private void ShowPanel(GameObject panel)
-    {
-        loginPanel.SetActive(false);
-        registerPanel.SetActive(false);
-        mainMenuPanel.SetActive(false);
-
-        panel.SetActive(true);
-    }
-
-    //Guardar usuarios en YAML
-    private void SaveUsers()
-    {
-        var serializer = new SerializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .Build();
-
-        string yaml = serializer.Serialize(userDatabase);
-        File.WriteAllText(filePath, yaml);
-    }
-
-    //Cargar usuarios desde YAML
-    private void LoadUsers()
-    {
-        if (!File.Exists(filePath)) return;
-
-        string yaml = File.ReadAllText(filePath);
-
-        var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .Build();
-
-        userDatabase = deserializer.Deserialize<UserDatabase>(yaml);
-    }
-
-    //Registrar un nuevo usuario
-    private void RegisterUser(string username, string password)
-    {
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        if (!File.Exists(filePath))
         {
-            Debug.LogError("Usuario o contraseña no pueden estar vacíos.");
-            return;
+            userDatabase = new UserDatabase { Users = new List<User>() };
+            SaveUsers();
         }
+        else
+        {
+            LoadUsers();
+        }
+    }
 
+    public bool RegisterUser(string username, string password)
+    {
         if (userDatabase.Users.Exists(u => u.Username == username))
         {
             Debug.LogError("El usuario ya existe.");
-            return;
+            return false;
         }
 
         string hashedPassword = HashPassword(password);
         userDatabase.Users.Add(new User { Username = username, PasswordHash = hashedPassword });
-
         SaveUsers();
-        Debug.Log("Cuenta creada con éxito.");
 
-        // Volver al panel de Login
-        ShowPanel(loginPanel);
+        Debug.Log("Usuario registrado correctamente.");
+        return true;
     }
 
-    //Iniciar sesión
-    private void Login(string username, string password)
+    public bool LoginUser(string username, string password)
     {
         User user = userDatabase.Users.Find(u => u.Username == username);
-
         if (user == null || user.PasswordHash != HashPassword(password))
         {
             Debug.LogError("Usuario o contraseña incorrectos.");
-            return;
+            return false;
         }
 
-        loggedInUser = username;
-        usernameDisplay.text = $"Bienvenido, {loggedInUser}";
-
-        Debug.Log("Inicio de sesión exitoso.");
-        ShowPanel(mainMenuPanel);
+        Debug.Log("Inicio de sesión exitoso: " + username);
+        return true;
     }
 
-    //Método para hashear la contraseña
+    private void SaveUsers()
+    {
+        var serializer = new SerializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
+        string yaml = serializer.Serialize(userDatabase);
+        File.WriteAllText(filePath, yaml);
+    }
+
+    private void LoadUsers()
+    {
+        string yaml = File.ReadAllText(filePath);
+        var deserializer = new DeserializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
+        userDatabase = deserializer.Deserialize<UserDatabase>(yaml);
+    }
+
     private string HashPassword(string password)
     {
-        return Convert.ToBase64String(System.Security.Cryptography.SHA256.Create()
-            .ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)));
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            StringBuilder builder = new StringBuilder();
+            foreach (byte b in bytes)
+                builder.Append(b.ToString("x2"));
+            return builder.ToString();
+        }
     }
 }
+
+    [System.Serializable]
+    public class User
+    {
+    public string Username;
+    public string PasswordHash;
+    }
+
+    [System.Serializable]
+    public class UserDatabase
+    {
+    public List<User> Users = new List<User>();
+    }
