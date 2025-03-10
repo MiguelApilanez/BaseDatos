@@ -19,24 +19,28 @@ public class playerController : MonoBehaviour
     public TextMeshProUGUI maxText;
     public EnemySpawner enemySpawner;
 
-    private UserManager userManager;
+    // Usamos la instancia de PlayerPointsManager
+    private PointsManager pointsManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        userManager = FindObjectOfType<UserManager>();
+        // Obtener la instancia del PlayerPointsManager
+        pointsManager = PointsManager.Instance;
+
+        if (pointsManager == null)
+        {
+            Debug.LogError("PointsManager no ha sido inicializado correctamente.");
+            return; // Si no se inicializa correctamente, salimos.
+        }
 
         puntosIniciales = 0;
         puntos = puntosIniciales;
-
 
         rbPlayer = GetComponent<Rigidbody2D>();
         animatorPlayer = GetComponent<Animator>();
 
         rbPlayer.bodyType = RigidbodyType2D.Kinematic;
-
-
-        //StartCoroutine(Suma());
 
         textPoints.text = puntos.ToString();
         maxText.text = puntosMax.ToString();
@@ -44,12 +48,10 @@ public class playerController : MonoBehaviour
         InvokeRepeating("Puntos", .5f, .5f);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         Movement();
     }
-
 
     void Puntos()
     {
@@ -68,29 +70,21 @@ public class playerController : MonoBehaviour
 
     void UpdatePlayerPoints(int newMaxPoints)
     {
-        // Buscamos al jugador en la base de datos de puntos
-        puntosJSON playerPoints = userManager.playerPointsDatabase.playerPoints.Find(p => p.email == userManager.GetCurrentUserEmail());
-
-        if (playerPoints != null)
+        if (pointsManager == null)
         {
-            // Si el jugador existe en la base de datos, actualizamos sus puntos máximos
-            playerPoints.maxPoints = newMaxPoints;
-        }
-        else
-        {
-            // Si el jugador no existe, lo agregamos con el puntaje máximo
-            userManager.playerPointsDatabase.playerPoints.Add(new puntosJSON(userManager.GetCurrentUserEmail(), newMaxPoints));
+            Debug.LogError("PointsManager no está inicializado.");
+            return; // Si no se ha inicializado, no continuar con la operación
         }
 
-        // Guardamos los puntos actualizados en el archivo JSON
-        userManager.SavePlayerPoints();
+        // Asegúrate de que la función GetCurrentUserEmail esté disponible en PlayerPointsManager
+        string currentUserEmail = pointsManager.GetCurrentUserEmail();
+
+        // Actualizamos los puntos usando el PlayerPointsManager
+        pointsManager.UpdatePoints(currentUserEmail, newMaxPoints);
     }
 
-
-void Movement()
+    void Movement()
     {
-        //moverse
-        //transform.Translate(Vector2.right * Input.GetAxis("Horizontal") * speed * Time.deltaTime);
         if (transform.position.x < -xLimit)
         {
             transform.position = new Vector3(-xLimit, transform.position.y, 0);
@@ -103,11 +97,7 @@ void Movement()
 
         float moveHorizontal = Input.GetAxisRaw("Horizontal");
 
-        //transform.Translate(Vector2.right * Input.GetAxis("Horizontal") * speed * Time.deltaTime);
-
         rbPlayer.velocity = new Vector2(speed * moveHorizontal, rbPlayer.velocity.y);
-
-        float currentYVelocity = rbPlayer.velocity.y;
 
         if (moveHorizontal > 0)
         {
@@ -119,24 +109,18 @@ void Movement()
         }
         else if (moveHorizontal == 0)
         {
-            //sprite.flipX = false;
             animatorPlayer.SetFloat("Speed", 0f);
         }
-
     }
-
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.tag == "Enemy")
         {
-            //Debug.Log("Colision");
-
             rbPlayer.bodyType = RigidbodyType2D.Dynamic;
 
             CancelInvoke();
             enemySpawner.jugando = false;
-            //StopCoroutine("Suma");
         }
     }
 
@@ -144,15 +128,10 @@ void Movement()
     {
         if (collision.gameObject.tag == "Enemy")
         {
-            //Debug.Log("Colision");
-
             rbPlayer.bodyType = RigidbodyType2D.Dynamic;
 
             CancelInvoke();
             enemySpawner.jugando = false;
-
-            UpdatePlayerPoints(puntosMax);
-            //StopCoroutine("Suma");
         }
     }
 }

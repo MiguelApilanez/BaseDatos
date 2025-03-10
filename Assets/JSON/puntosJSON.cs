@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 [System.Serializable]
 public class puntosJSON
 {
-    public playerController playerController;
-
     public string email;
     public int maxPoints;
 
@@ -15,6 +14,8 @@ public class puntosJSON
         this.email = email;
         this.maxPoints = maxPoints;
     }
+
+    
 }
 
 [System.Serializable]

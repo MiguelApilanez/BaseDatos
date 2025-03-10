@@ -13,20 +13,21 @@ using System.Text;
 public class UserManager : MonoBehaviour
 {
     private string filePath;
-    private string pointsFilePath;
     private UserDatabase userDatabase;
-    public PlayerPointsDatabase playerPointsDatabase;
 
-    private string currentUserEmail;
+    private PointsManager pointsManager;
+
+    public string currentUserEmail;
 
     private void Start()
     {
+        pointsManager = FindObjectOfType<PointsManager>();
+
         Debug.Log("Ruta del archivo YAML: " + filePath);
     }
     private void Awake()
     {
-        filePath = Path.Combine(Application.persistentDataPath, "users.yaml");
-        pointsFilePath = Path.Combine(Application.persistentDataPath, "playerPoints.json");
+        filePath = Path.Combine(Application.streamingAssetsPath, "users.yaml");
 
         if (!File.Exists(filePath))
         {
@@ -36,16 +37,6 @@ public class UserManager : MonoBehaviour
         else
         {
             LoadUsers();
-        }
-
-        if (!File.Exists(pointsFilePath))
-        {
-            playerPointsDatabase = new PlayerPointsDatabase { playerPoints = new List<puntosJSON>() };
-            SavePlayerPoints();
-        }
-        else
-        {
-            LoadPlayerPoints();
         }
     }
 
@@ -75,6 +66,8 @@ public class UserManager : MonoBehaviour
         }
 
         Debug.Log("Inicio de sesión exitoso: " + username);
+
+        currentUserEmail = username;
         return true;
     }
 
@@ -90,29 +83,11 @@ public class UserManager : MonoBehaviour
         string yaml = File.ReadAllText(filePath);
         var deserializer = new DeserializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
         userDatabase = deserializer.Deserialize<UserDatabase>(yaml);
+
+        
     }
 
-    public void SetCurrentUserEmail(string email)
-    {
-        currentUserEmail = email;
-    }
-
-    public string GetCurrentUserEmail()
-    {
-        return currentUserEmail;
-    }
-
-    public void SavePlayerPoints()
-    {
-        string json = JsonUtility.ToJson(playerPointsDatabase, true);
-        File.WriteAllText(pointsFilePath, json);
-    }
-
-    public void LoadPlayerPoints()
-    {
-        string json = File.ReadAllText(pointsFilePath);
-        playerPointsDatabase = JsonUtility.FromJson<PlayerPointsDatabase>(json);
-    }
+    
 
     private string HashPassword(string password)
     {

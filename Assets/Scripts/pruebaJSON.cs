@@ -26,8 +26,8 @@ public class pruebaJSON : MonoBehaviour
         model.highScore = maxPuntos;
 
         string json = JsonUtility.ToJson(model);
-        File.WriteAllText(Application.persistentDataPath + "/save.json", json);
-        Debug.Log("Writing File to: " + Application.persistentDataPath);
+        File.WriteAllText(Application.streamingAssetsPath + "/save.json", json);
+        Debug.Log("Writing File to: " + Application.streamingAssetsPath);
     }
 
     void LoadData()
