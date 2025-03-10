@@ -12,24 +12,36 @@ public class playerController : MonoBehaviour
     Animator animatorPlayer;
 
     [Header("Puntos")]
+    public int puntosIniciales;
     public int puntos;
+    public int puntosMax;
     public TextMeshProUGUI textPoints;
+    public TextMeshProUGUI maxText;
+    public EnemySpawner enemySpawner;
+
+    private UserManager userManager;
 
     // Start is called before the first frame update
     void Start()
     {
+        userManager = FindObjectOfType<UserManager>();
+
+        puntosIniciales = 0;
+        puntos = puntosIniciales;
+
+
         rbPlayer = GetComponent<Rigidbody2D>();
         animatorPlayer = GetComponent<Animator>();
 
         rbPlayer.bodyType = RigidbodyType2D.Kinematic;
 
-        puntos = 0;
 
-        StartCoroutine(Suma());
+        //StartCoroutine(Suma());
 
         textPoints.text = puntos.ToString();
+        maxText.text = puntosMax.ToString();
 
-        //InvokeRepeating("Puntos", .5f, .5f);
+        InvokeRepeating("Puntos", .5f, .5f);
     }
 
     // Update is called once per frame
@@ -38,20 +50,44 @@ public class playerController : MonoBehaviour
         Movement();
     }
 
-    public IEnumerator Suma()
-    {
-        puntos ++;
 
-        yield return new WaitForSeconds(.5f);
-    }
-
-    /*void Puntos()
+    void Puntos()
     {
         puntos++;
-        textPoints.text = puntos.ToString();
-    }*/
 
-    void Movement()
+        if (puntos > puntosMax)
+        {
+            puntosMax = puntos;
+        }
+
+        textPoints.text = puntos.ToString();
+        maxText.text = puntosMax.ToString();
+
+        UpdatePlayerPoints(puntosMax);
+    }
+
+    void UpdatePlayerPoints(int newMaxPoints)
+    {
+        // Buscamos al jugador en la base de datos de puntos
+        puntosJSON playerPoints = userManager.playerPointsDatabase.playerPoints.Find(p => p.email == userManager.GetCurrentUserEmail());
+
+        if (playerPoints != null)
+        {
+            // Si el jugador existe en la base de datos, actualizamos sus puntos máximos
+            playerPoints.maxPoints = newMaxPoints;
+        }
+        else
+        {
+            // Si el jugador no existe, lo agregamos con el puntaje máximo
+            userManager.playerPointsDatabase.playerPoints.Add(new puntosJSON(userManager.GetCurrentUserEmail(), newMaxPoints));
+        }
+
+        // Guardamos los puntos actualizados en el archivo JSON
+        userManager.SavePlayerPoints();
+    }
+
+
+void Movement()
     {
         //moverse
         //transform.Translate(Vector2.right * Input.GetAxis("Horizontal") * speed * Time.deltaTime);
@@ -92,10 +128,31 @@ public class playerController : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("Colision");
+        if(collision.gameObject.tag == "Enemy")
+        {
+            //Debug.Log("Colision");
 
-        rbPlayer.bodyType = RigidbodyType2D.Dynamic;
+            rbPlayer.bodyType = RigidbodyType2D.Dynamic;
 
-        //StopCoroutine("Suma");
+            CancelInvoke();
+            enemySpawner.jugando = false;
+            //StopCoroutine("Suma");
+        }
+    }
+
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            //Debug.Log("Colision");
+
+            rbPlayer.bodyType = RigidbodyType2D.Dynamic;
+
+            CancelInvoke();
+            enemySpawner.jugando = false;
+
+            UpdatePlayerPoints(puntosMax);
+            //StopCoroutine("Suma");
+        }
     }
 }

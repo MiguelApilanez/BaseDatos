@@ -15,5 +15,10 @@ public class enemyController : MonoBehaviour
     void Update()
     {
         transform.Translate(Vector3.down * Time.deltaTime * speed);
+
+        if (transform.position.y <= -11f)
+        {
+            Destroy(this);
+        }
     }
 }
