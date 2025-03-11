@@ -19,19 +19,22 @@ public class playerController : MonoBehaviour
     public TextMeshProUGUI maxText;
     public EnemySpawner enemySpawner;
 
-    // Usamos la instancia de PlayerPointsManager
     private PointsManager pointsManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        // Obtener la instancia del PlayerPointsManager
         pointsManager = PointsManager.Instance;
 
         if (pointsManager == null)
         {
             Debug.LogError("PointsManager no ha sido inicializado correctamente.");
-            return; // Si no se inicializa correctamente, salimos.
+            return;
+        }
+        else if(pointsManager != null)
+        {
+            puntosMax = pointsManager.puntosMax;
+            Debug.Log("Puntos máximos del jugador: " +  puntosMax);
         }
 
         puntosIniciales = 0;
@@ -41,6 +44,7 @@ public class playerController : MonoBehaviour
         animatorPlayer = GetComponent<Animator>();
 
         rbPlayer.bodyType = RigidbodyType2D.Kinematic;
+
 
         textPoints.text = puntos.ToString();
         maxText.text = puntosMax.ToString();
@@ -73,14 +77,10 @@ public class playerController : MonoBehaviour
         if (pointsManager == null)
         {
             Debug.LogError("PointsManager no está inicializado.");
-            return; // Si no se ha inicializado, no continuar con la operación
+            return;
         }
 
-        // Asegúrate de que la función GetCurrentUserEmail esté disponible en PlayerPointsManager
-        string currentUserEmail = pointsManager.GetCurrentUserEmail();
-
-        // Actualizamos los puntos usando el PlayerPointsManager
-        pointsManager.UpdatePoints(currentUserEmail, newMaxPoints);
+        pointsManager.UpdatePoints(newMaxPoints);
     }
 
     void Movement()

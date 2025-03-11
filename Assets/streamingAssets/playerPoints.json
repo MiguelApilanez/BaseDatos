@@ -1,8 +1,12 @@
 {
     "playerPoints": [
         {
-            "email": "",
-            "maxPoints": 20
+            "email": "Tusilini",
+            "maxPoints": 33
+        },
+        {
+            "email": "Esuatini",
+            "maxPoints": 29
         }
     ]
 }

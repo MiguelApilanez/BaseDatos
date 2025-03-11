@@ -24,6 +24,8 @@ public class UserManager : MonoBehaviour
         pointsManager = FindObjectOfType<PointsManager>();
 
         Debug.Log("Ruta del archivo YAML: " + filePath);
+
+        DontDestroyOnLoad(this.gameObject);
     }
     private void Awake()
     {

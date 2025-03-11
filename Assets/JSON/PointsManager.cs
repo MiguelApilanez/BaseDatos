@@ -14,76 +14,102 @@ public class PointsManager : MonoBehaviour
 
     private UserManager userManager;
 
+    public int puntosMax;
+
     private void Awake()
     {
         userManager = FindObjectOfType<UserManager>();
 
         if (Instance != null)
         {
-            Destroy(gameObject);  // Si ya existe una instancia, destrúyela.
+            Destroy(gameObject);
             return;
         }
 
-        Instance = this;  // Asignamos la instancia
+        Instance = this;
         pointsFilePath = Path.Combine(Application.streamingAssetsPath, "playerPoints.json");
 
-        // Cargamos los puntos si el archivo existe
         if (File.Exists(pointsFilePath))
         {
             LoadPlayerPoints();
         }
         else
         {
-            playerPointsDatabase = new PlayerPointsDatabase();  // Si no existe, creamos una nueva base de datos.
+            playerPointsDatabase = new PlayerPointsDatabase();
             SavePlayerPoints();
+        }
+
+        currentUserEmail = userManager.currentUserEmail;
+
+        if (!string.IsNullOrEmpty(currentUserEmail))
+        {
+            SetPlayerMaxPoints(currentUserEmail);
         }
     }
 
-    public void SetCurrentUserEmail(string email)
+    private void SetPlayerMaxPoints(string email)
     {
-        currentUserEmail = email;
+        puntosJSON playerPoints = GetPlayerPoints(email);
+
+        if (playerPoints != null)
+        {
+            puntosMax = playerPoints.maxPoints;
+            Debug.Log("Puntos máximos del jugador " + email + ": " + puntosMax);
+        }
+        else
+        {
+            Debug.LogWarning("El jugador " + email + " no tiene puntos registrados.");
+            puntosMax = 0;
+        }
     }
 
-    public string GetCurrentUserEmail()
-    {
-        return currentUserEmail;
-    }
-
-
-
-    // Método para cargar los puntos del archivo JSON
     public void LoadPlayerPoints()
     {
         string json = File.ReadAllText(pointsFilePath);
         playerPointsDatabase = JsonUtility.FromJson<PlayerPointsDatabase>(json);
     }
 
-    // Método para guardar los puntos en el archivo JSON
     public void SavePlayerPoints()
     {
         string json = JsonUtility.ToJson(playerPointsDatabase, true);
         File.WriteAllText(pointsFilePath, json);
     }
 
-    // Método para obtener puntos por correo
     public puntosJSON GetPlayerPoints(string email)
     {
         return playerPointsDatabase.playerPoints.Find(p => p.email == email);
     }
 
-    // Método para agregar o actualizar puntos de un jugador
-    public void UpdatePoints(string email, int newMaxPoints)
+    public void UpdatePoints(int newMaxPoints)
     {
+        if (Instance == null)
+        {
+            Debug.LogError("PointsManager no está inicializado correctamente.");
+            return;
+        }
+
+        string email = userManager.currentUserEmail;
+        if (string.IsNullOrEmpty(email))
+        {
+            Debug.LogError("El correo del usuario no está asignado correctamente.");
+            return;
+        }
+
         puntosJSON playerPoints = GetPlayerPoints(email);
+
         if (playerPoints != null)
         {
-            playerPoints.maxPoints = newMaxPoints;
+            if (newMaxPoints > playerPoints.maxPoints)
+            {
+                playerPoints.maxPoints = newMaxPoints;
+                SavePlayerPoints();
+            }
         }
         else
         {
+            Debug.Log("Añadiendo nuevo jugador: " + email + " con puntuación: " + newMaxPoints);
             playerPointsDatabase.playerPoints.Add(new puntosJSON(email, newMaxPoints));
+            SavePlayerPoints();
         }
-
-        SavePlayerPoints();
     }
 }
