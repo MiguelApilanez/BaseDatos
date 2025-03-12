@@ -7,15 +7,16 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     public UserManager userManager;
+    public TMP_Text usernameText;
 
     [Header("Login Panel")]
-    public TMP_InputField usernameInputLogin;
+    public TMP_InputField emailInputLogin;
     public TMP_InputField passwordInputLogin;
     public GameObject loginPanel;
     public GameObject mainMenuPanel;
 
     [Header("Register Panel")]
-    public TMP_InputField usernameInputRegister;
+    public TMP_InputField emailInputRegister;
     public TMP_InputField passwordInputRegister;
     public GameObject registerPanel;
 
@@ -28,34 +29,44 @@ public class UIManager : MonoBehaviour
 
     public void TryLogin()
     {
-        string username = usernameInputLogin.text;
+        string input = emailInputLogin.text; // Puede ser correo o nombre de usuario
         string password = passwordInputLogin.text;
 
-        if (userManager.LoginUser(username, password))
+        if (userManager.LoginUser(input, password))
         {
-            ShowMainMenu(username);
+            // Obtener el usuario autenticado
+            User user = userManager.GetUserByEmailOrUsername(input);
+
+            if (user != null)
+            {
+                ShowMainMenu(user.Email); // Pasamos el correo correctamente
+            }
+            else
+            {
+                Debug.LogError("El usuario no se encontró después de iniciar sesión.");
+            }
         }
         /*
         else
         {
-            errorText.text = "Usuario o contraseña incorrectos.";
+            errorText.text = "Correo/Usuario o contraseña incorrectos.";
         }
         */
     }
 
     public void TryRegister()
     {
-        string username = usernameInputRegister.text;
+        string email = emailInputRegister.text;
         string password = passwordInputRegister.text;
 
-        if (userManager.RegisterUser(username, password))
+        if (userManager.RegisterUser(email, password))
         {
             ShowLoginPanel();
         }
         /*
         else
         {
-            errorText.text = "El usuario ya existe.";
+            errorText.text = "Error al registrar usuario.";
         }
         */
     }
@@ -71,13 +82,17 @@ public class UIManager : MonoBehaviour
         registerPanel.SetActive(true);
     }
 
-    public void ShowMainMenu(string username)
+    public void ShowMainMenu(string email)
     {
-        loginPanel.SetActive(false);
-        registerPanel.SetActive(false);
-        mainMenuPanel.SetActive(true);
+        if (string.IsNullOrEmpty(userManager.currentUserEmail))
+        {
+            Debug.LogError("El correo del usuario no está asignado correctamente.");
+            return;
+        }
 
-        Debug.Log("Bienvenido " + username);
+        usernameText.text = "Usuario: " + userManager.currentUserEmail; // Muestra el correo en el menú principal
+        loginPanel.SetActive(false);
+        mainMenuPanel.SetActive(true);
     }
     public void ShowLogros(string username)
     {

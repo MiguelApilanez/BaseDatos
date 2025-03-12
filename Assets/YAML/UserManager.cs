@@ -9,6 +9,7 @@ using YamlDotNet.Serialization.NamingConventions;
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 public class UserManager : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class UserManager : MonoBehaviour
     }
     private void Awake()
     {
-        filePath = Path.Combine(Application.streamingAssetsPath, "users.yaml");
+        filePath = Path.Combine(Application.persistentDataPath, "users.yaml");
 
         if (!File.Exists(filePath))
         {
@@ -39,37 +40,61 @@ public class UserManager : MonoBehaviour
         else
         {
             LoadUsers();
+            if (userDatabase.Users == null)
+            {
+                userDatabase.Users = new List<User>();
+            }
         }
     }
-
-    public bool RegisterUser(string username, string password)
+    public User GetUserByEmailOrUsername(string input)
     {
-        if (userDatabase.Users.Exists(u => u.Username == username))
+        return userDatabase.Users.Find(u => u.Email == input || u.Username == input);
+    }
+    public bool RegisterUser(string email, string password)
+    {
+        if (userDatabase == null || userDatabase.Users == null)
         {
-            Debug.LogError("El usuario ya existe.");
+            userDatabase = new UserDatabase { Users = new List<User>() };
+        }
+
+        // Validar formato del email
+        if (!IsValidEmail(email))
+        {
+            Debug.LogError("Correo inválido.");
+            return false;
+        }
+
+        // Extraer el nombre de usuario antes del @
+        string username = email.Split('@')[0];
+
+        if (userDatabase.Users.Exists(u => u.Email == email))
+        {
+            Debug.LogError("Este correo ya está registrado.");
             return false;
         }
 
         string hashedPassword = HashPassword(password);
-        userDatabase.Users.Add(new User { Username = username, PasswordHash = hashedPassword });
+        userDatabase.Users.Add(new User { Email = email, Username = username, PasswordHash = hashedPassword });
         SaveUsers();
 
-        Debug.Log("Usuario registrado correctamente.");
+        Debug.Log($"Usuario registrado correctamente. Nombre de usuario: {username}");
         return true;
     }
 
-    public bool LoginUser(string username, string password)
+    public bool LoginUser(string input, string password)
     {
-        User user = userDatabase.Users.Find(u => u.Username == username);
+        User user = userDatabase.Users.Find(u => u.Email == input || u.Username == input);
+
         if (user == null || user.PasswordHash != HashPassword(password))
         {
-            Debug.LogError("Usuario o contraseña incorrectos.");
+            Debug.LogError("Correo/Usuario o contraseña incorrectos.");
             return false;
         }
 
-        Debug.Log("Inicio de sesión exitoso: " + username);
+        //Asigna el correo del usuario
+        currentUserEmail = user.Email;
+        Debug.Log("Inicio de sesión exitoso: " + currentUserEmail);
 
-        currentUserEmail = username;
         return true;
     }
 
@@ -79,18 +104,12 @@ public class UserManager : MonoBehaviour
         string yaml = serializer.Serialize(userDatabase);
         File.WriteAllText(filePath, yaml);
     }
-
     private void LoadUsers()
     {
         string yaml = File.ReadAllText(filePath);
         var deserializer = new DeserializerBuilder().WithNamingConvention(CamelCaseNamingConvention.Instance).Build();
         userDatabase = deserializer.Deserialize<UserDatabase>(yaml);
-
-        
     }
-
-    
-
     private string HashPassword(string password)
     {
         using (SHA256 sha256 = SHA256.Create())
@@ -102,11 +121,17 @@ public class UserManager : MonoBehaviour
             return builder.ToString();
         }
     }
+    private bool IsValidEmail(string email)
+    {
+        string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        return Regex.IsMatch(email, pattern);
+    }
 }
 
     [System.Serializable]
     public class User
     {
+    public string Email;
     public string Username;
     public string PasswordHash;
     }

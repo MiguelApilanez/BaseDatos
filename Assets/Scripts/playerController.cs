@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class playerController : MonoBehaviour
 {
@@ -18,6 +19,10 @@ public class playerController : MonoBehaviour
     public TextMeshProUGUI textPoints;
     public TextMeshProUGUI maxText;
     public EnemySpawner enemySpawner;
+
+    [Header("UI")]
+    public GameObject menuButton;
+    public GameObject restartButton;
 
     private PointsManager pointsManager;
 
@@ -50,6 +55,12 @@ public class playerController : MonoBehaviour
         maxText.text = puntosMax.ToString();
 
         InvokeRepeating("Puntos", .5f, .5f);
+
+        if (menuButton != null)
+            menuButton.SetActive(false);
+
+        if (restartButton != null)
+            restartButton.SetActive(false);
     }
 
     private void Update()
@@ -112,7 +123,7 @@ public class playerController : MonoBehaviour
             animatorPlayer.SetFloat("Speed", 0f);
         }
     }
-
+    /*
     public void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Enemy")
@@ -121,8 +132,15 @@ public class playerController : MonoBehaviour
 
             CancelInvoke();
             enemySpawner.jugando = false;
+
+            if (menuButton != null)
+                menuButton.SetActive(true);
+
+            if (restartButton != null)
+                restartButton.SetActive(true);
         }
     }
+    */
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
@@ -132,6 +150,20 @@ public class playerController : MonoBehaviour
 
             CancelInvoke();
             enemySpawner.jugando = false;
+
+            if (menuButton != null)
+                menuButton.SetActive(true);
+
+            if (restartButton != null)
+                restartButton.SetActive(true);
         }
+    }
+    public void BackButton()
+    {
+        SceneManager.LoadScene("IndexScene");
+    }
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

@@ -5,10 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour
 {
-    void Start()
-    {
-        
-    }
+    public GameObject mainMenuPanel;
+    public GameObject logrosPanel;
     public void StartButton()
     {
         SceneManager.LoadScene("GameScene");
@@ -18,5 +16,15 @@ public class MenuController : MonoBehaviour
     {
         Application.Quit();
         Debug.Log("Se cierra el juego");
+    }
+    public void LogrosButton()
+    {
+        mainMenuPanel.SetActive(false);
+        logrosPanel.SetActive(true);
+    }
+    public void LogrosBackButton()
+    {
+        mainMenuPanel.SetActive(true);
+        logrosPanel.SetActive(false);
     }
 }
