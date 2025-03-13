@@ -27,4 +27,8 @@ public class MenuController : MonoBehaviour
         mainMenuPanel.SetActive(true);
         logrosPanel.SetActive(false);
     }
+    public void BackButton()
+    {
+        SceneManager.LoadScene("IndexScene");
+    }
 }
