@@ -15,6 +15,14 @@
         {
             "email": "esuatini@gmail.com",
             "maxPoints": 17
+        },
+        {
+            "email": "antonio@gmail.com",
+            "maxPoints": 25
+        },
+        {
+            "email": "miguel@gmail.com",
+            "maxPoints": 8
         }
     ]
 }
