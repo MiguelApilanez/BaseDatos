@@ -10,7 +10,7 @@ public class ArchivmentBuilder : MonoBehaviour
 
     public void SetUp(Archivments archivment)
     {
-        if (_name != null) _name.text = archivment.name;
-        if (_value != null) _value.text = archivment.value;
+        if (_name != null) _name.text = archivment.descripción;
+        if (_value != null) _value.text = archivment.completado;
     }
 }

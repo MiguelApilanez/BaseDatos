@@ -4,13 +4,13 @@ using UnityEngine;
 
 public struct Archivments
 {
-    public string name;
-    public string value;
+    public string descripción;
+    public string completado;
 
 
-    public Archivments (string name, string value)
+    public Archivments (string descripción, string completado)
     {
-        this.name = name;
-        this.value = value;
+        this.descripción = descripción;
+        this.completado = completado;
     }
 }
