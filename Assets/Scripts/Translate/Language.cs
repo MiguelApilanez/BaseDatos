@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class Language : MonoBehaviour
 {
-    [SerializeField] private string _language;
+    public enum Languages
+    {
+        Spanish,
+        English
+    }
 
-    public string GetLanguage()
+    [SerializeField] private Languages _language;
+
+    public Languages GetLanguage()
     {
         return _language;
     }

@@ -6,15 +6,16 @@ using UnityEngine;
 
 public class Translator : TextMeshProUGUI
 {
-    [SerializeField] private Language language;
-
+    [SerializeField] private Language _language;
 
     protected override void Awake()
     {
         base.Awake();
 
+        _language = FindObjectOfType<Language>();
+        //SqlSelect sqlLoader = new SqlSelect("SELECT " + _language.GetLanguage() + " FROM idiomos WHERE id='" + gameObject.name + "'");
+        //var lines = sqlLoader.Execute();
 
-        //SqlSelect sqlloader = new SqlSelect ("SELECT" + language + "From Idiomos WHERE Id='"+ gameObject.name + "'")
-
+        //text = lines[0];
     }
 }
