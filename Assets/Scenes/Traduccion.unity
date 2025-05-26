@@ -166,7 +166,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 241028095}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea7565638221b6242b2f08151e34a08b, type: 3}
   m_Name: 
@@ -248,7 +248,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
-  language: {fileID: 0}
+  _language: {fileID: 559085631}
 --- !u!222 &241028098
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -286,7 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49e6a21e67239d140a21a06092e8b11e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _language: ESP
+  _language: 0
 --- !u!4 &559085632
 Transform:
   m_ObjectHideFlags: 0
@@ -661,7 +661,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1098004571}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea7565638221b6242b2f08151e34a08b, type: 3}
   m_Name: 
@@ -743,7 +743,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
-  language: {fileID: 559085631}
+  _language: {fileID: 559085631}
 --- !u!224 &1098004574
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1031,7 +1031,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1685696467}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea7565638221b6242b2f08151e34a08b, type: 3}
   m_Name: 
@@ -1113,7 +1113,7 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
-  language: {fileID: 0}
+  _language: {fileID: 559085631}
 --- !u!222 &1685696470
 CanvasRenderer:
   m_ObjectHideFlags: 0

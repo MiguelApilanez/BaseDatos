@@ -7,6 +7,9 @@ public class MenuController : MonoBehaviour
 {
     public GameObject mainMenuPanel;
     public GameObject logrosPanel;
+    public GameObject loginPanel;
+    public GameObject singUpPanel;
+
     public void StartButton()
     {
         SceneManager.LoadScene("GameScene");
@@ -16,6 +19,12 @@ public class MenuController : MonoBehaviour
     {
         Application.Quit();
         Debug.Log("Se cierra el juego");
+    }
+    public void LoginPanel()
+    {
+        loginPanel.SetActive(false);
+        singUpPanel.SetActive(true);
+        Debug.Log("Crear usuario");
     }
     public void LogrosButton()
     {
