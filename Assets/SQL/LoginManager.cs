@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 using TMPro;
+using System.Linq;
 
 public class LoginManager : MonoBehaviour
 {
@@ -32,15 +33,21 @@ public class LoginManager : MonoBehaviour
         feedbackText.text = "";
     }
 
-    // Botón: Iniciar sesión
     public void Login()
     {
         StartCoroutine(LoginRequest());
     }
 
-    // Botón: Crear usuario
     public void Register()
     {
+        string pass = signUpPasswordField.text;
+
+        if (pass.Length < 6 || !pass.Any(char.IsDigit))
+        {
+            feedbackText.text = "La contraseña debe tener al menos 6 caracteres y un número.";
+            return;
+        }
+
         StartCoroutine(RegisterRequest());
     }
 
@@ -105,6 +112,10 @@ public class LoginManager : MonoBehaviour
             else if (response == "missing_data")
             {
                 feedbackText.text = "Faltan datos. Revisa los campos.";
+            }
+            else if (response == "invalid_password")
+            {
+                feedbackText.text = "La contraseña debe tener al menos 6 caracteres y un número.";
             }
             else
             {
