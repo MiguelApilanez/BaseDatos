@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using MySql.Data.MySqlClient;
 
 public class playerController : MonoBehaviour
 {
@@ -24,24 +25,23 @@ public class playerController : MonoBehaviour
     public GameObject menuButton;
     public GameObject restartButton;
 
-    private PointsManager pointsManager;
+    private PlayerPointsManager pointsManagerDB;
+
+    private string connectionString = "Server=localhost; database=basedatos; user=root; password=;";
+
 
     // Start is called before the first frame update
     void Start()
     {
-        pointsManager = PointsManager.Instance;
+        pointsManagerDB = new PlayerPointsManager(); // Crear una instancia de PlayerPointsManager
 
-        if (pointsManager == null)
+        if (pointsManagerDB == null)
         {
-            Debug.LogError("PointsManager no ha sido inicializado correctamente.");
+            Debug.LogError("PlayerPointsManager no ha sido inicializado correctamente.");
             return;
         }
-        else if(pointsManager != null)
-        {
-            puntosMax = pointsManager.puntosMax;
-            Debug.Log("Puntos máximos del jugador: " +  puntosMax);
-        }
 
+        // Inicializamos los puntos
         puntosIniciales = 0;
         puntos = puntosIniciales;
 
@@ -50,9 +50,12 @@ public class playerController : MonoBehaviour
 
         rbPlayer.bodyType = RigidbodyType2D.Kinematic;
 
+        // Cargar los puntos máximos desde la base de datos
+        string username = LoginArreglado.currentUserEmail; // Obtener el nombre de usuario
+        puntosMax = LoadPlayerMaxPoints(username);
 
         textPoints.text = puntos.ToString();
-        maxText.text = puntosMax.ToString();
+        maxText.text = puntosMax.ToString(); // Actualizar maxText con los puntos máximos cargados
 
         InvokeRepeating("Puntos", .5f, .5f);
 
@@ -63,10 +66,44 @@ public class playerController : MonoBehaviour
             restartButton.SetActive(false);
     }
 
+
     private void Update()
     {
         Movement();
     }
+
+    // Método para cargar los puntos máximos desde la base de datos
+    private int LoadPlayerMaxPoints(string email)
+    {
+        MySqlConnection connection = new MySqlConnection(connectionString);
+        int maxPoints = 0;
+        try
+        {
+            connection.Open();
+
+            string query = "SELECT max_points FROM puntos_jugadores WHERE email = @Email";
+            MySqlCommand cmd = new MySqlCommand(query, connection);
+            cmd.Parameters.AddWithValue("@Email", email);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                maxPoints = reader.GetInt32("max_points");
+            }
+        }
+        catch (MySqlException e)
+        {
+            Debug.LogError("Error al cargar los puntos máximos: " + e.Message);
+        }
+        finally
+        {
+            connection.Close();
+        }
+
+        return maxPoints;
+    }
+
 
     void Puntos()
     {
@@ -75,23 +112,36 @@ public class playerController : MonoBehaviour
         if (puntos > puntosMax)
         {
             puntosMax = puntos;
+            string username = LoginArreglado.currentUserEmail;
+            UpdatePlayerPoints(puntosMax);
         }
 
         textPoints.text = puntos.ToString();
-        maxText.text = puntosMax.ToString();
-
-        UpdatePlayerPoints(puntosMax);
+        maxText.text = puntosMax.ToString(); // Asegúrate de que los puntos máximos se actualicen en la UI
     }
+
 
     void UpdatePlayerPoints(int newMaxPoints)
     {
-        if (pointsManager == null)
+        string email = LoginArreglado.currentUserEmail;
+
+        if (string.IsNullOrEmpty(email))
         {
-            Debug.LogError("PointsManager no está inicializado.");
+            Debug.LogError("El correo del jugador no es válido.");
             return;
         }
 
-        pointsManager.UpdatePoints(newMaxPoints);
+        // Llamamos a la función de actualización en la base de datos
+        bool success = pointsManagerDB.UpdatePlayerPoints(email, newMaxPoints);
+
+        if (success)
+        {
+            Debug.Log("Puntos en la base de datos actualizados correctamente.");
+        }
+        else
+        {
+            Debug.LogError("Error al actualizar los puntos en la base de datos.");
+        }
     }
 
     void Movement()
@@ -123,24 +173,6 @@ public class playerController : MonoBehaviour
             animatorPlayer.SetFloat("Speed", 0f);
         }
     }
-    /*
-    public void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Enemy")
-        {
-            rbPlayer.bodyType = RigidbodyType2D.Dynamic;
-
-            CancelInvoke();
-            enemySpawner.jugando = false;
-
-            if (menuButton != null)
-                menuButton.SetActive(true);
-
-            if (restartButton != null)
-                restartButton.SetActive(true);
-        }
-    }
-    */
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
@@ -158,10 +190,12 @@ public class playerController : MonoBehaviour
                 restartButton.SetActive(true);
         }
     }
+
     public void BackButton()
     {
         SceneManager.LoadScene("IndexScene");
     }
+
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
