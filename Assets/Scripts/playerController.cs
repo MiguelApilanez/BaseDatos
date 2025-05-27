@@ -109,30 +109,30 @@ public class playerController : MonoBehaviour
     {
         puntos++;
 
+        AchievementsManager.Instance.CheckAchievements(puntos);
+
         if (puntos > puntosMax)
         {
             puntosMax = puntos;
-            string username = LoginArreglado.currentUserEmail;
+            string username = LoginArreglado.currentUsername;
             UpdatePlayerPoints(puntosMax);
         }
 
         textPoints.text = puntos.ToString();
-        maxText.text = puntosMax.ToString(); // Asegúrate de que los puntos máximos se actualicen en la UI
+        maxText.text = puntosMax.ToString();
     }
-
 
     void UpdatePlayerPoints(int newMaxPoints)
     {
-        string email = LoginArreglado.currentUserEmail;
+        string username = LoginArreglado.currentUsername;
 
-        if (string.IsNullOrEmpty(email))
+        if (string.IsNullOrEmpty(username))
         {
-            Debug.LogError("El correo del jugador no es válido.");
+            Debug.LogError("El nombre de usuario no es válido.");
             return;
         }
 
-        // Llamamos a la función de actualización en la base de datos
-        bool success = pointsManagerDB.UpdatePlayerPoints(email, newMaxPoints);
+        bool success = pointsManagerDB.UpdatePlayerPoints(username, newMaxPoints);
 
         if (success)
         {
