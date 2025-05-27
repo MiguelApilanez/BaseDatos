@@ -29,11 +29,9 @@ public class playerController : MonoBehaviour
 
     private string connectionString = "Server=localhost; database=basedatos; user=root; password=;";
 
-
-    // Start is called before the first frame update
     void Start()
     {
-        pointsManagerDB = new PlayerPointsManager(); // Crear una instancia de PlayerPointsManager
+        pointsManagerDB = new PlayerPointsManager();
 
         if (pointsManagerDB == null)
         {
@@ -41,7 +39,6 @@ public class playerController : MonoBehaviour
             return;
         }
 
-        // Inicializamos los puntos
         puntosIniciales = 0;
         puntos = puntosIniciales;
 
@@ -50,12 +47,11 @@ public class playerController : MonoBehaviour
 
         rbPlayer.bodyType = RigidbodyType2D.Kinematic;
 
-        // Cargar los puntos máximos desde la base de datos
-        string username = LoginArreglado.currentUserEmail; // Obtener el nombre de usuario
+        string username = LoginArreglado.currentUserEmail;
         puntosMax = LoadPlayerMaxPoints(username);
 
         textPoints.text = puntos.ToString();
-        maxText.text = puntosMax.ToString(); // Actualizar maxText con los puntos máximos cargados
+        maxText.text = puntosMax.ToString();
 
         InvokeRepeating("Puntos", .5f, .5f);
 
@@ -66,13 +62,11 @@ public class playerController : MonoBehaviour
             restartButton.SetActive(false);
     }
 
-
     private void Update()
     {
         Movement();
     }
 
-    // Método para cargar los puntos máximos desde la base de datos
     private int LoadPlayerMaxPoints(string email)
     {
         MySqlConnection connection = new MySqlConnection(connectionString);
@@ -104,12 +98,11 @@ public class playerController : MonoBehaviour
         return maxPoints;
     }
 
-
     void Puntos()
     {
         puntos++;
 
-        AchievementsManager.Instance.CheckAchievements(puntos);
+        CheckAchievements(puntos);
 
         if (puntos > puntosMax)
         {
@@ -120,6 +113,18 @@ public class playerController : MonoBehaviour
 
         textPoints.text = puntos.ToString();
         maxText.text = puntosMax.ToString();
+    }
+    public void CheckAchievements(int puntos)
+    {
+        string userEmail = LoginArreglado.currentUserEmail;
+
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            Debug.LogError("No se ha encontrado el email del usuario.");
+            return;
+        }
+
+        AchievementsManager.Instance.CheckAchievements(puntos, userEmail);
     }
 
     void UpdatePlayerPoints(int newMaxPoints)
@@ -190,7 +195,6 @@ public class playerController : MonoBehaviour
                 restartButton.SetActive(true);
         }
     }
-
     public void BackButton()
     {
         SceneManager.LoadScene("IndexScene");

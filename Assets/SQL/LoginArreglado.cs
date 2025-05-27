@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using MySql.Data.MySqlClient;
-using System.Threading.Tasks; // Asegúrate de tener esta importación
+using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using System.Linq;
 using UnityEngine.UI;
@@ -15,6 +15,7 @@ public class LoginArreglado : MonoBehaviour
     public GameObject loginPanel;
     public GameObject signUpPanel;
     public GameObject mainMenuPanel;
+    public GameObject settingsPanel;
 
     [Header("Login Fields")]
     public TMP_InputField loginUserField;
@@ -40,7 +41,6 @@ public class LoginArreglado : MonoBehaviour
 
     private string connectionString = "Server=localhost; database=basedatos; user=root; password=;";
 
-    // Variable estática para almacenar el correo del jugador
     public static string currentUserEmail;
     public static string currentUsername;
 
@@ -52,7 +52,10 @@ public class LoginArreglado : MonoBehaviour
     }
     void Start()
     {
-        AchievementsManager.Instance.LoadAchievements();
+        if (!string.IsNullOrEmpty(currentUserEmail))
+        {
+            AchievementsManager.Instance.LoadAchievements(currentUserEmail);
+        }
 
         openAchievementsButton.onClick.AddListener(OpenAchievementsPanel);
     }
@@ -61,16 +64,40 @@ public class LoginArreglado : MonoBehaviour
         mainMenuPanel.SetActive(false);
         achievementsPanel.SetActive(true);
 
-        AchievementsManager.Instance.LoadAchievements();
+        if (!string.IsNullOrEmpty(currentUserEmail))
+        {
+            AchievementsManager.Instance.LoadAchievements(currentUserEmail);
+        }
 
         string logrosDisplay = "";
+
+        if (AchievementsManager.Instance.logros.Count == 0)
+        {
+            Debug.LogError("No se han cargado logros para este usuario.");
+            achievementsText.text = "No hay logros disponibles.";
+            return;
+        }
+
+        if (AchievementsManager.Instance.logros.Count != AchievementsManager.Instance.logrosCompletados.Count)
+        {
+            Debug.LogError("Los tamaños de logros y logrosCompletados no coinciden.");
+            achievementsText.text = "Error al cargar los logros.";
+            return;
+        }
 
         Debug.Log("Total logros: " + AchievementsManager.Instance.logros.Count);
 
         for (int i = 0; i < AchievementsManager.Instance.logros.Count; i++)
         {
-            string estadoLogro = AchievementsManager.Instance.logrosCompletados[i] ? "Completado" : "No Completado";
-            logrosDisplay += AchievementsManager.Instance.logros[i] + " - " + estadoLogro + "\n";
+            if (i < AchievementsManager.Instance.logrosCompletados.Count)
+            {
+                string estadoLogro = AchievementsManager.Instance.logrosCompletados[i] ? "Completado" : "No Completado";
+                logrosDisplay += AchievementsManager.Instance.logros[i] + " - " + estadoLogro + "\n";
+            }
+            else
+            {
+                Debug.LogWarning("Índice fuera de rango para logrosCompletados: " + i);
+            }
         }
 
         Debug.Log("Logros a mostrar: " + logrosDisplay);
@@ -140,7 +167,6 @@ public class LoginArreglado : MonoBehaviour
             feedbackText.text = "Usuario o contraseña incorrectos.";
         }
     }
-
     private bool CheckLogin(string email, string username, string password)
     {
         MySqlConnection connection = new MySqlConnection(connectionString);
@@ -308,7 +334,7 @@ public class LoginArreglado : MonoBehaviour
     private string GetLastLogin(string email)
     {
         MySqlConnection connection = new MySqlConnection(connectionString);
-        string lastLogin = "Nunca";
+        string lastLogin = "Primer inicio de sesión";
         try
         {
             connection.Open();
@@ -327,7 +353,7 @@ public class LoginArreglado : MonoBehaviour
                 }
                 else
                 {
-                    lastLogin = "Nunca";
+                    lastLogin = "Primer inicio de sesión";
                 }
             }
         }
@@ -432,6 +458,16 @@ public class LoginArreglado : MonoBehaviour
     public void CloseAchievementsPanel()
     {
         achievementsPanel.SetActive(false);
+        mainMenuPanel.SetActive(true);
+    }
+    public void OpenSettingsPanel()
+    {
+        settingsPanel.SetActive(true);
+        mainMenuPanel.SetActive(false);
+    }
+    public void CloseSettingsPanel()
+    {
+        settingsPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
     }
 }
