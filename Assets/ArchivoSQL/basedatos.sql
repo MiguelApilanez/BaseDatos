@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-05-2025 a las 19:46:38
+-- Tiempo de generación: 31-05-2025 a las 01:18:00
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -103,7 +103,52 @@ INSERT INTO `logros_completados` (`usuario_email`, `logro_id`, `completado`) VAL
 ('tusilinix@gmail.com', 1, 1),
 ('prueba@gmail.com', 1, 1),
 ('prueba@gmail.com', 2, 1),
-('prueba@gmail.com', 3, 1);
+('prueba@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1),
+('tusilinix@gmail.com', 1, 1),
+('tusilinix@gmail.com', 2, 1),
+('tusilinix@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1);
 
 -- --------------------------------------------------------
 
@@ -113,24 +158,19 @@ INSERT INTO `logros_completados` (`usuario_email`, `logro_id`, `completado`) VAL
 
 CREATE TABLE `puntos_jugadores` (
   `email` varchar(255) NOT NULL,
-  `max_points` int(11) NOT NULL,
-  `username` varchar(255) DEFAULT NULL
+  `username` text NOT NULL,
+  `max_points` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `puntos_jugadores`
 --
 
-INSERT INTO `puntos_jugadores` (`email`, `max_points`, `username`) VALUES
-('miguel4@gmail.com', 17, NULL),
-('miguel@gmail.com', 0, NULL),
-('panoramix@gmail.com', 0, NULL),
-('patato@gmail.com', 0, NULL),
-('prueba', 11, NULL),
-('prueba@gmail.com', 0, NULL),
-('tusilini1@gmail.com', 20, NULL),
-('tusilinix', 103, NULL),
-('tusilinix@gmail.com', 14, NULL);
+INSERT INTO `puntos_jugadores` (`email`, `username`, `max_points`) VALUES
+('miguel4@gmail.com', 'miguel4', 17),
+('prueba@gmail.com', 'prueba', 0),
+('tusilini1@gmail.com', 'tusilini1', 20),
+('tusilinix@gmail.com', 'tusilinix', 103);
 
 -- --------------------------------------------------------
 
@@ -156,7 +196,7 @@ INSERT INTO `usuarios` (`id`, `email`, `username`, `password`, `last_login`, `vo
 (5, 'miguel2@gmail.com', 'miguel2', '1234', NULL, 0.5),
 (12, 'miguel3@gmail.com', 'miguel3', 'SQL', NULL, 0.5),
 (13, 'miguel4@gmail.com', 'miguel4', 'Miguel4', NULL, 0.5),
-(14, 'tusilini1@gmail.com', 'tusilini1', 'tusilini1', NULL, 0.5),
+(14, 'tusilini1@gmail.com', 'tusilini1', 'tusilini1', '2025-05-31 01:09:31', 0.5),
 (19, 'tusilinix@gmail.com', 'tusilinix', 'tusilini10', '2025-05-27 17:58:11', 0),
 (20, 'prueba@gmail.com', 'prueba', 'prueba1', NULL, 0.5);
 
@@ -177,7 +217,8 @@ CREATE TABLE `usuario_settings` (
 --
 
 INSERT INTO `usuario_settings` (`id`, `email`, `volume`) VALUES
-(1, 'tusilinix@gmail.com', 0.0498093);
+(1, 'tusilinix@gmail.com', 0.0498093),
+(480, 'tusilini1@gmail.com', 0.292382);
 
 --
 -- Índices para tablas volcadas
@@ -207,8 +248,7 @@ ALTER TABLE `logros_completados`
 --
 ALTER TABLE `puntos_jugadores`
   ADD PRIMARY KEY (`email`),
-  ADD UNIQUE KEY `email` (`email`) USING BTREE,
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `email` (`email`) USING BTREE;
 
 --
 -- Indices de la tabla `usuarios`
@@ -244,7 +284,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `usuario_settings`
 --
 ALTER TABLE `usuario_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=480;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=606;
 
 --
 -- Restricciones para tablas volcadas

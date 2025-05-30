@@ -12,6 +12,7 @@ public class playerController : MonoBehaviour
     public float speed = 15f;
     Rigidbody2D rbPlayer;
     Animator animatorPlayer;
+    CircleCollider2D circleCollider;
 
     [Header("Puntos")]
     public int puntosIniciales;
@@ -24,14 +25,24 @@ public class playerController : MonoBehaviour
     [Header("UI")]
     public GameObject menuButton;
     public GameObject restartButton;
+    public GameObject rankingCanvas;
 
     private PlayerPointsManager pointsManagerDB;
+
+    private RankingDisplay ranking;
+    bool rankingActive;
 
     private string connectionString = "Server=localhost; database=basedatos; user=root; password=;";
 
     void Start()
     {
+        rankingActive = false;
         pointsManagerDB = new PlayerPointsManager();
+        ranking = GetComponent<RankingDisplay>();
+        circleCollider = GetComponent<CircleCollider2D>();
+        circleCollider.enabled = true;
+
+        pointsManagerDB.CheckAndFixUsernames();
 
         if (pointsManagerDB == null)
         {
@@ -60,6 +71,9 @@ public class playerController : MonoBehaviour
 
         if (restartButton != null)
             restartButton.SetActive(false);
+
+        if(rankingCanvas != null)
+            rankingCanvas.SetActive(false);
     }
 
     private void Update()
@@ -184,6 +198,7 @@ public class playerController : MonoBehaviour
         if (collision.gameObject.tag == "Enemy")
         {
             rbPlayer.bodyType = RigidbodyType2D.Dynamic;
+            circleCollider.enabled = false;
 
             CancelInvoke();
             enemySpawner.jugando = false;
@@ -193,6 +208,19 @@ public class playerController : MonoBehaviour
 
             if (restartButton != null)
                 restartButton.SetActive(true);
+
+            if(rankingCanvas != null)
+            {
+                rankingCanvas.SetActive(true);
+                rankingActive = true;
+            }
+                
+
+            if(ranking != null && rankingActive)
+            {
+                ranking.ShowTopPlayers();
+                rankingActive = false;
+            }
         }
     }
     public void BackButton()
