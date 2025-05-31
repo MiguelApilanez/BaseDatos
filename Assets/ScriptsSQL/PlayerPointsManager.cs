@@ -63,9 +63,16 @@ public class PlayerPointsManager
         }
     }
 
+    private string GetEmailFromUsername(MySqlConnection connection, string username)
+    {
+        string query = "SELECT email FROM usuarios WHERE username = @Username";
+        MySqlCommand cmd = new MySqlCommand(query, connection);
+        cmd.Parameters.AddWithValue("@Username", username);
+        object result = cmd.ExecuteScalar();
+        return result != null ? result.ToString() : null;
+    }
 
-
-    public bool SavePlayerPoints(string email, int maxPoints)
+    public bool SavePlayerPoints(string identificador, int maxPoints)
     {
         using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
@@ -73,10 +80,22 @@ public class PlayerPointsManager
             {
                 connection.Open();
 
+                string email = identificador;
+                if (!identificador.Contains("@"))
+                {
+                    // Si no contiene @, asumimos que es username
+                    email = GetEmailFromUsername(connection, identificador);
+                    if (string.IsNullOrEmpty(email))
+                    {
+                        Debug.LogError("No se encontró un email para el username: " + identificador);
+                        return false;
+                    }
+                }
+
                 string username = GetUsernameFromEmail(connection, email);
                 if (string.IsNullOrEmpty(username))
                 {
-                    Debug.LogError("No se encontró un usuario con el email: " + email);
+                    Debug.LogError("No se encontró un username para el email: " + email);
                     return false;
                 }
 
@@ -113,13 +132,25 @@ public class PlayerPointsManager
         }
     }
 
-    public bool UpdatePlayerPoints(string email, int newMaxPoints)
+    public bool UpdatePlayerPoints(string identificador, int newMaxPoints)
     {
         using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
             try
             {
                 connection.Open();
+
+                string email = identificador;
+                if (!identificador.Contains("@"))
+                {
+                    // Es username
+                    email = GetEmailFromUsername(connection, identificador);
+                    if (string.IsNullOrEmpty(email))
+                    {
+                        Debug.LogError("No se encontró un email para el username: " + identificador);
+                        return false;
+                    }
+                }
 
                 string checkQuery = "SELECT * FROM puntos_jugadores WHERE email = @Email";
                 MySqlCommand checkCmd = new MySqlCommand(checkQuery, connection);
@@ -152,4 +183,5 @@ public class PlayerPointsManager
             }
         }
     }
+
 }

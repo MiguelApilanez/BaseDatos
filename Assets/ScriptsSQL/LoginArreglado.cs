@@ -16,6 +16,7 @@ public class LoginArreglado : MonoBehaviour
     public GameObject signUpPanel;
     public GameObject mainMenuPanel;
     public GameObject settingsPanel;
+    public GameObject searchPanel;
 
     [Header("Login Fields")]
     public TMP_InputField loginUserField;
@@ -175,33 +176,54 @@ public class LoginArreglado : MonoBehaviour
             connection.Open();
 
             string query = "";
+            string identifierField = "";
+            string identifierValue = "";
+
             if (!string.IsNullOrEmpty(email))
             {
-                query = "SELECT * FROM usuarios WHERE email = @Email AND password = @Password";
+                query = "SELECT * FROM usuarios WHERE email = @Identifier AND password = @Password";
+                identifierField = "email";
+                identifierValue = email;
             }
             else if (!string.IsNullOrEmpty(username))
             {
-                query = "SELECT * FROM usuarios WHERE username = @Username AND password = @Password";
+                query = "SELECT * FROM usuarios WHERE username = @Identifier AND password = @Password";
+                identifierField = "username";
+                identifierValue = username;
+            }
+            else
+            {
+                Debug.LogError("No se proporcionó email ni username.");
+                return false;
             }
 
             MySqlCommand cmd = new MySqlCommand(query, connection);
-
-            if (!string.IsNullOrEmpty(email))
-            {
-                cmd.Parameters.AddWithValue("@Email", email);
-            }
-            else if (!string.IsNullOrEmpty(username))
-            {
-                cmd.Parameters.AddWithValue("@Username", username);
-            }
-
+            cmd.Parameters.AddWithValue("@Identifier", identifierValue);
             cmd.Parameters.AddWithValue("@Password", password);
 
             MySqlDataReader reader = cmd.ExecuteReader();
 
-            if (reader.Read())
+            bool userFound = reader.Read();
+            reader.Close(); // SIEMPRE cerrar antes de hacer otro query
+
+            if (userFound)
             {
-                reader.Close();
+                // Obtener el email real si se inició con username
+                if (string.IsNullOrEmpty(email))
+                {
+                    string getEmailQuery = "SELECT email FROM usuarios WHERE username = @Username";
+                    MySqlCommand emailCmd = new MySqlCommand(getEmailQuery, connection);
+                    emailCmd.Parameters.AddWithValue("@Username", username);
+                    var emailReader = emailCmd.ExecuteReader();
+
+                    if (emailReader.Read())
+                    {
+                        email = emailReader.GetString("email");
+                    }
+                    emailReader.Close();
+                }
+
+                // Ahora sí: actualizar last_login
                 string updateQuery = "UPDATE usuarios SET last_login = @LastLogin WHERE email = @Email";
                 MySqlCommand updateCmd = new MySqlCommand(updateQuery, connection);
                 updateCmd.Parameters.AddWithValue("@LastLogin", DateTime.Now);
@@ -211,10 +233,8 @@ public class LoginArreglado : MonoBehaviour
 
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
         catch (MySqlException e)
         {
@@ -226,6 +246,8 @@ public class LoginArreglado : MonoBehaviour
             connection.Close();
         }
     }
+
+
     private string GetEmailByUsername(string username)
     {
         MySqlConnection connection = new MySqlConnection(connectionString);
@@ -468,6 +490,16 @@ public class LoginArreglado : MonoBehaviour
     public void CloseSettingsPanel()
     {
         settingsPanel.SetActive(false);
+        mainMenuPanel.SetActive(true);
+    }
+    public void OpenSearchPanel()
+    {
+        searchPanel.SetActive(true);
+        mainMenuPanel.SetActive(false);
+    }
+    public void CloseSearchPanel()
+    {
+        searchPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
     }
 }

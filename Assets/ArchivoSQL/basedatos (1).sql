@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 31-05-2025 a las 01:18:00
+-- Tiempo de generación: 31-05-2025 a las 04:11:18
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -148,7 +148,13 @@ INSERT INTO `logros_completados` (`usuario_email`, `logro_id`, `completado`) VAL
 ('tusilinix@gmail.com', 3, 1),
 ('tusilini1@gmail.com', 1, 1),
 ('tusilini1@gmail.com', 2, 1),
-('tusilini1@gmail.com', 3, 1);
+('tusilini1@gmail.com', 3, 1),
+('apilanezmiguel@gmail.com', 1, 1),
+('apilanezmiguel@gmail.com', 2, 1),
+('apilanezmiguel@gmail.com', 3, 1),
+('apilanezmiguel@gmail.com', 1, 1),
+('apilanezmiguel@gmail.com', 2, 1),
+('apilanezmiguel@gmail.com', 3, 1);
 
 -- --------------------------------------------------------
 
@@ -167,6 +173,9 @@ CREATE TABLE `puntos_jugadores` (
 --
 
 INSERT INTO `puntos_jugadores` (`email`, `username`, `max_points`) VALUES
+('apilanezmiguel@gmail.com', 'apilanezmiguel', 15),
+('miguel2@gmail.com', 'miguel2', 10),
+('miguel3@gmail.com', 'miguel3', 6),
 ('miguel4@gmail.com', 'miguel4', 17),
 ('prueba@gmail.com', 'prueba', 0),
 ('tusilini1@gmail.com', 'tusilini1', 20),
@@ -192,13 +201,13 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `email`, `username`, `password`, `last_login`, `volume`) VALUES
-(1, 'apilanezmiguel@gmail.com', 'apilanezmiguel', 'MiguelSQL', NULL, 0.5),
-(5, 'miguel2@gmail.com', 'miguel2', '1234', NULL, 0.5),
-(12, 'miguel3@gmail.com', 'miguel3', 'SQL', NULL, 0.5),
-(13, 'miguel4@gmail.com', 'miguel4', 'Miguel4', NULL, 0.5),
-(14, 'tusilini1@gmail.com', 'tusilini1', 'tusilini1', '2025-05-31 01:09:31', 0.5),
+(1, 'apilanezmiguel@gmail.com', 'apilanezmiguel', 'MiguelSQL', '2025-05-31 04:07:59', 0.5),
+(5, 'miguel2@gmail.com', 'miguel2', '1234', '2025-05-31 04:08:32', 0.5),
+(12, 'miguel3@gmail.com', 'miguel3', 'SQL', '2025-05-31 04:08:53', 0.5),
+(13, 'miguel4@gmail.com', 'miguel4', 'Miguel4', '2025-05-31 04:09:10', 0.5),
+(14, 'tusilini1@gmail.com', 'tusilini1', 'tusilini1', '2025-05-31 04:10:31', 0.5),
 (19, 'tusilinix@gmail.com', 'tusilinix', 'tusilini10', '2025-05-27 17:58:11', 0),
-(20, 'prueba@gmail.com', 'prueba', 'prueba1', NULL, 0.5);
+(20, 'prueba@gmail.com', 'prueba', 'prueba1', '2025-05-31 04:09:25', 0.5);
 
 -- --------------------------------------------------------
 
