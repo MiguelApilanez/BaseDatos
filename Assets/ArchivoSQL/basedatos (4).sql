@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 31-05-2025 a las 17:31:53
+-- Tiempo de generación: 31-05-2025 a las 22:33:32
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -196,7 +196,6 @@ INSERT INTO `seguimientos` (`seguidor_email`, `seguido_username`) VALUES
 --
 
 CREATE TABLE `usuarios` (
-  `id` int(11) NOT NULL,
   `email` varchar(100) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -208,14 +207,14 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `email`, `username`, `password`, `last_login`, `language`) VALUES
-(1, 'apilanezmiguel@gmail.com', 'apilanezmiguel', 'MiguelSQL', '2025-05-31 04:07:59', 'es'),
-(5, 'miguel2@gmail.com', 'miguel2', '1234', '2025-05-31 04:42:46', 'es'),
-(12, 'miguel3@gmail.com', 'miguel3', 'SQL', '2025-05-31 04:08:53', 'es'),
-(13, 'miguel4@gmail.com', 'miguel4', 'Miguel4', '2025-05-31 04:09:10', 'es'),
-(14, 'tusilini1@gmail.com', 'tusilini1', 'tusilini1', '2025-05-31 17:30:19', 'es'),
-(19, 'tusilinix@gmail.com', 'tusilinix', 'tusilini10', '2025-05-31 17:30:46', 'es'),
-(20, 'prueba@gmail.com', 'prueba', 'prueba1', '2025-05-31 13:25:46', 'es');
+INSERT INTO `usuarios` (`email`, `username`, `password`, `last_login`, `language`) VALUES
+('apilanezmiguel@gmail.com', 'apilanezmiguel', 'MiguelSQL', '2025-05-31 04:07:59', 'es'),
+('miguel2@gmail.com', 'miguel2', '1234', '2025-05-31 04:42:46', 'es'),
+('miguel3@gmail.com', 'miguel3', 'SQL', '2025-05-31 04:08:53', 'es'),
+('miguel4@gmail.com', 'miguel4', 'Miguel4', '2025-05-31 04:09:10', 'es'),
+('prueba@gmail.com', 'prueba', 'prueba1', '2025-05-31 13:25:46', 'es'),
+('tusilini1@gmail.com', 'tusilini1', 'tusilini1', '2025-05-31 17:30:19', 'es'),
+('tusilinix@gmail.com', 'tusilinix', 'tusilini10', '2025-05-31 17:30:46', 'es');
 
 -- --------------------------------------------------------
 
@@ -277,7 +276,7 @@ ALTER TABLE `seguimientos`
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`),
+  ADD PRIMARY KEY (`email`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
@@ -296,12 +295,6 @@ ALTER TABLE `usuario_settings`
 --
 ALTER TABLE `logros`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Restricciones para tablas volcadas
