@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 31-05-2025 a las 13:27:04
+-- Tiempo de generación: 31-05-2025 a las 17:31:53
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -114,7 +114,10 @@ INSERT INTO `logros_completados` (`usuario_email`, `logro_id`, `completado`) VAL
 ('apilanezmiguel@gmail.com', 3, 1),
 ('apilanezmiguel@gmail.com', 1, 1),
 ('apilanezmiguel@gmail.com', 2, 1),
-('apilanezmiguel@gmail.com', 3, 1);
+('apilanezmiguel@gmail.com', 3, 1),
+('tusilini1@gmail.com', 1, 1),
+('tusilini1@gmail.com', 2, 1),
+('tusilini1@gmail.com', 3, 1);
 
 -- --------------------------------------------------------
 
@@ -157,6 +160,8 @@ CREATE TABLE `seguidores_usuarios` (
 --
 
 INSERT INTO `seguidores_usuarios` (`seguido_username`, `numero_seguidores`) VALUES
+('miguel2', 2),
+('prueba', 2),
 ('tusilini1', 1),
 ('tusilinix', 2);
 
@@ -177,7 +182,11 @@ CREATE TABLE `seguimientos` (
 
 INSERT INTO `seguimientos` (`seguidor_email`, `seguido_username`) VALUES
 ('miguel2@gmail.com', 'tusilinix'),
+('tusilini1@gmail.com', 'miguel2'),
+('tusilini1@gmail.com', 'prueba'),
 ('tusilini1@gmail.com', 'tusilinix'),
+('tusilinix@gmail.com', 'miguel2'),
+('tusilinix@gmail.com', 'prueba'),
 ('tusilinix@gmail.com', 'tusilini1');
 
 -- --------------------------------------------------------
@@ -192,8 +201,6 @@ CREATE TABLE `usuarios` (
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `last_login` datetime DEFAULT NULL,
-  `volume` float DEFAULT 0.5,
-  `idioma` varchar(10) DEFAULT 'es',
   `language` varchar(2) DEFAULT 'es'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -201,14 +208,14 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `email`, `username`, `password`, `last_login`, `volume`, `idioma`, `language`) VALUES
-(1, 'apilanezmiguel@gmail.com', 'apilanezmiguel', 'MiguelSQL', '2025-05-31 04:07:59', 0.5, 'es', 'es'),
-(5, 'miguel2@gmail.com', 'miguel2', '1234', '2025-05-31 04:42:46', 0.5, 'es', 'es'),
-(12, 'miguel3@gmail.com', 'miguel3', 'SQL', '2025-05-31 04:08:53', 0.5, 'es', 'es'),
-(13, 'miguel4@gmail.com', 'miguel4', 'Miguel4', '2025-05-31 04:09:10', 0.5, 'es', 'es'),
-(14, 'tusilini1@gmail.com', 'tusilini1', 'tusilini1', '2025-05-31 04:33:46', 0.5, 'es', 'es'),
-(19, 'tusilinix@gmail.com', 'tusilinix', 'tusilini10', '2025-05-31 13:25:31', 0, 'es', 'es'),
-(20, 'prueba@gmail.com', 'prueba', 'prueba1', '2025-05-31 13:25:46', 0.5, 'es', 'es');
+INSERT INTO `usuarios` (`id`, `email`, `username`, `password`, `last_login`, `language`) VALUES
+(1, 'apilanezmiguel@gmail.com', 'apilanezmiguel', 'MiguelSQL', '2025-05-31 04:07:59', 'es'),
+(5, 'miguel2@gmail.com', 'miguel2', '1234', '2025-05-31 04:42:46', 'es'),
+(12, 'miguel3@gmail.com', 'miguel3', 'SQL', '2025-05-31 04:08:53', 'es'),
+(13, 'miguel4@gmail.com', 'miguel4', 'Miguel4', '2025-05-31 04:09:10', 'es'),
+(14, 'tusilini1@gmail.com', 'tusilini1', 'tusilini1', '2025-05-31 17:30:19', 'es'),
+(19, 'tusilinix@gmail.com', 'tusilinix', 'tusilini10', '2025-05-31 17:30:46', 'es'),
+(20, 'prueba@gmail.com', 'prueba', 'prueba1', '2025-05-31 13:25:46', 'es');
 
 -- --------------------------------------------------------
 
@@ -217,7 +224,6 @@ INSERT INTO `usuarios` (`id`, `email`, `username`, `password`, `last_login`, `vo
 --
 
 CREATE TABLE `usuario_settings` (
-  `id` int(11) NOT NULL,
   `email` varchar(255) NOT NULL,
   `volume` float DEFAULT 0.5
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -226,9 +232,10 @@ CREATE TABLE `usuario_settings` (
 -- Volcado de datos para la tabla `usuario_settings`
 --
 
-INSERT INTO `usuario_settings` (`id`, `email`, `volume`) VALUES
-(1, 'tusilinix@gmail.com', 0.5),
-(196, 'prueba@gmail.com', 0.5);
+INSERT INTO `usuario_settings` (`email`, `volume`) VALUES
+('prueba@gmail.com', 0.5),
+('tusilini1@gmail.com', 0.055864),
+('tusilinix@gmail.com', 0);
 
 --
 -- Índices para tablas volcadas
@@ -277,8 +284,8 @@ ALTER TABLE `usuarios`
 -- Indices de la tabla `usuario_settings`
 --
 ALTER TABLE `usuario_settings`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `email_2` (`email`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -295,12 +302,6 @@ ALTER TABLE `logros`
 --
 ALTER TABLE `usuarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
-
---
--- AUTO_INCREMENT de la tabla `usuario_settings`
---
-ALTER TABLE `usuario_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=197;
 
 --
 -- Restricciones para tablas volcadas
