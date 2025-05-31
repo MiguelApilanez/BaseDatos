@@ -17,6 +17,7 @@ public class LoginArreglado : MonoBehaviour
     public GameObject mainMenuPanel;
     public GameObject settingsPanel;
     public GameObject searchPanel;
+    public GameObject followersPanel;
 
     [Header("Login Fields")]
     public TMP_InputField loginUserField;
@@ -500,6 +501,16 @@ public class LoginArreglado : MonoBehaviour
     public void CloseSearchPanel()
     {
         searchPanel.SetActive(false);
+        mainMenuPanel.SetActive(true);
+    }
+    public void OpenFollowersPanel()
+    {
+        followersPanel.SetActive(true);
+        mainMenuPanel.SetActive(false);
+    }
+    public void CloseFollowersPanel()
+    {
+        followersPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
     }
 }
