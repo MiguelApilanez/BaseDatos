@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 31-05-2025 a las 04:50:22
+-- Tiempo de generación: 31-05-2025 a las 13:27:04
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,46 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `basedatos`
 --
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `idiomas`
---
-
-CREATE TABLE `idiomas` (
-  `id` varchar(50) NOT NULL,
-  `ESP` text DEFAULT NULL,
-  `EN` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `idiomas`
---
-
-INSERT INTO `idiomas` (`id`, `ESP`, `EN`) VALUES
-('main_menu_button_exit', 'Salir', 'Exit'),
-('main_menu_button_start', 'Empezar', 'Start');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `idiomos`
---
-
-CREATE TABLE `idiomos` (
-  `id` varchar(50) NOT NULL,
-  `ESP` text DEFAULT NULL,
-  `EN` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `idiomos`
---
-
-INSERT INTO `idiomos` (`id`, `ESP`, `EN`) VALUES
-('main_manu_button_exit', 'Salir', 'Exit'),
-('main_menu_button_start', 'Empezar', 'Start');
 
 -- --------------------------------------------------------
 
@@ -232,21 +192,23 @@ CREATE TABLE `usuarios` (
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `last_login` datetime DEFAULT NULL,
-  `volume` float DEFAULT 0.5
+  `volume` float DEFAULT 0.5,
+  `idioma` varchar(10) DEFAULT 'es',
+  `language` varchar(2) DEFAULT 'es'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `email`, `username`, `password`, `last_login`, `volume`) VALUES
-(1, 'apilanezmiguel@gmail.com', 'apilanezmiguel', 'MiguelSQL', '2025-05-31 04:07:59', 0.5),
-(5, 'miguel2@gmail.com', 'miguel2', '1234', '2025-05-31 04:42:46', 0.5),
-(12, 'miguel3@gmail.com', 'miguel3', 'SQL', '2025-05-31 04:08:53', 0.5),
-(13, 'miguel4@gmail.com', 'miguel4', 'Miguel4', '2025-05-31 04:09:10', 0.5),
-(14, 'tusilini1@gmail.com', 'tusilini1', 'tusilini1', '2025-05-31 04:33:46', 0.5),
-(19, 'tusilinix@gmail.com', 'tusilinix', 'tusilini10', '2025-05-31 04:40:02', 0),
-(20, 'prueba@gmail.com', 'prueba', 'prueba1', '2025-05-31 04:09:25', 0.5);
+INSERT INTO `usuarios` (`id`, `email`, `username`, `password`, `last_login`, `volume`, `idioma`, `language`) VALUES
+(1, 'apilanezmiguel@gmail.com', 'apilanezmiguel', 'MiguelSQL', '2025-05-31 04:07:59', 0.5, 'es', 'es'),
+(5, 'miguel2@gmail.com', 'miguel2', '1234', '2025-05-31 04:42:46', 0.5, 'es', 'es'),
+(12, 'miguel3@gmail.com', 'miguel3', 'SQL', '2025-05-31 04:08:53', 0.5, 'es', 'es'),
+(13, 'miguel4@gmail.com', 'miguel4', 'Miguel4', '2025-05-31 04:09:10', 0.5, 'es', 'es'),
+(14, 'tusilini1@gmail.com', 'tusilini1', 'tusilini1', '2025-05-31 04:33:46', 0.5, 'es', 'es'),
+(19, 'tusilinix@gmail.com', 'tusilinix', 'tusilini10', '2025-05-31 13:25:31', 0, 'es', 'es'),
+(20, 'prueba@gmail.com', 'prueba', 'prueba1', '2025-05-31 13:25:46', 0.5, 'es', 'es');
 
 -- --------------------------------------------------------
 
@@ -265,18 +227,12 @@ CREATE TABLE `usuario_settings` (
 --
 
 INSERT INTO `usuario_settings` (`id`, `email`, `volume`) VALUES
-(1, 'tusilinix@gmail.com', 0.0498093),
-(480, 'tusilini1@gmail.com', 0.292382);
+(1, 'tusilinix@gmail.com', 0.5),
+(196, 'prueba@gmail.com', 0.5);
 
 --
 -- Índices para tablas volcadas
 --
-
---
--- Indices de la tabla `idiomos`
---
-ALTER TABLE `idiomos`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `logros`
@@ -344,7 +300,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `usuario_settings`
 --
 ALTER TABLE `usuario_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=606;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=197;
 
 --
 -- Restricciones para tablas volcadas
